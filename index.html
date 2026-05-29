@@ -9,11 +9,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
             min-height: 100vh;
-            /* Фоновая картинка (замени ссылку на свою, если хочешь) */
             background-image: url('https://images.unsplash.com/photo-1513151233558-860c5392818d?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -25,9 +25,9 @@
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
-        /* Затемнение фона для читаемости текста */
         body::before {
             content: '';
             position: fixed;
@@ -35,54 +35,77 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.3);
             z-index: 0;
         }
 
-        /* Контейнер для плавающих сердец - НА ПЕРЕДНЕМ ПЛАНЕ (поверх карточки тоже) */
+        /* Контейнер для сердец */
         .heart-container {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 20; /* Большой z-index, чтобы быть поверх всего */
+            pointer-events: auto; /* Чтобы можно было трогать сердечки */
+            z-index: 20;
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         .heart {
             position: absolute;
             bottom: -30px;
-            font-size: 28px;
-            opacity: 0.25; /* Почти прозрачные - 25% видимости */
+            font-size: 40px;
+            cursor: pointer;
             animation: floatUp linear forwards;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.1));
-            transition: opacity 0.3s;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+            transition: transform 0.1s ease;
+            pointer-events: auto;
+            z-index: 25;
+        }
+
+        .heart:active {
+            transform: scale(0.9);
         }
 
         @keyframes floatUp {
             0% {
                 transform: translateY(0) rotate(0deg);
-                opacity: 0.25;
-            }
-            50% {
-                opacity: 0.35;
+                opacity: 1;
             }
             100% {
                 transform: translateY(-120vh) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        /* Маленькие звёздочки */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            font-size: 12px;
+            animation: explode 0.6s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(180deg);
                 opacity: 0;
             }
         }
 
-        /* Карточка с текстом - тоже на переднем плане, но поверх сердец не будет, 
-           сердечки будут плавать И ПЕРЕД карточкой, но полупрозрачные - очень нежно */
+        /* Карточка */
         .card {
             position: relative;
-            z-index: 15; /* Чуть ниже сердец (20), чтобы сердечки были слегка поверх */
+            z-index: 15;
             max-width: 650px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             border-radius: 60px;
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
@@ -107,7 +130,6 @@
             font-weight: 800;
             color: #c9184a;
             margin-bottom: 20px;
-            letter-spacing: -0.5px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
@@ -115,7 +137,7 @@
             font-size: 1.6rem;
             line-height: 1.5;
             color: #2d1a20;
-            background: rgba(255, 240, 243, 0.85);
+            background: rgba(255, 240, 243, 0.9);
             padding: 25px;
             border-radius: 50px;
             margin: 25px 0;
@@ -124,7 +146,7 @@
 
         .reasons {
             text-align: left;
-            background: rgba(255, 220, 230, 0.8);
+            background: rgba(255, 220, 230, 0.85);
             padding: 20px 25px;
             border-radius: 45px;
             margin: 25px 0;
@@ -208,8 +230,7 @@
                 font-size: 1.2rem;
             }
             .heart {
-                opacity: 0.2;
-                font-size: 22px;
+                font-size: 45px;
             }
         }
     </style>
@@ -235,61 +256,127 @@
     <button class="forgive-btn" id="forgiveBtn">✨ Прости меня, Марина ✨</button>
     <div id="responseMessage" class="response" style="display: none;"></div>
     <div class="footer">
-        💖 Нежные сердечки танцуют для тебя 💖
+        💖 Нажми на сердечко — оно лопнет звёздочками! 💖
     </div>
 </div>
 
 <script>
-    // Создаём сердечко/цветок, который летит снизу вверх (ПОЧТИ ПРОЗРАЧНЫЙ)
-    function createRisingHeart() {
-        const container = document.getElementById('heartContainer');
+    const container = document.getElementById('heartContainer');
+
+    // Функция создания звёздочек при лопании сердечка
+    function createSparkles(x, y) {
+        const sparkleCount = 12;
+        for (let i = 0; i < sparkleCount; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            const stars = ['✨', '⭐', '🌟', '💫', '⭐', '✨', '💥'];
+            sparkle.innerHTML = stars[Math.floor(Math.random() * stars.length)];
+            
+            // Случайное смещение
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 30 + Math.random() * 60;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            
+            sparkle.style.left = (x + dx) + 'px';
+            sparkle.style.top = (y + dy) + 'px';
+            sparkle.style.fontSize = (10 + Math.random() * 14) + 'px';
+            sparkle.style.animationDuration = (0.4 + Math.random() * 0.5) + 's';
+            
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 600);
+        }
+    }
+
+    // Создание сердечка
+    function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('heart');
         
-        // Красивые символы: сердечки и цветочки
-        const symbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝', '🌺', '🪷', '✨'];
+        const symbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝', '💘'];
         heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
         
-        heart.style.left = Math.random() * 100 + '%';
-        heart.style.fontSize = (Math.random() * 24 + 20) + 'px'; // 20-44px
-        heart.style.animationDuration = (Math.random() * 7 + 6) + 's'; // 6-13 секунд (медленнее, чтобы не мельтешить)
-        heart.style.animationDelay = (Math.random() * 5) + 's';
-        heart.style.opacity = 0.2 + Math.random() * 0.2; // 0.2-0.4 (очень прозрачные)
+        heart.style.left = Math.random() * 90 + 5 + '%';
+        heart.style.fontSize = (35 + Math.random() * 25) + 'px';
+        heart.style.animationDuration = (6 + Math.random() * 6) + 's';
+        heart.style.animationDelay = (Math.random() * 3) + 's';
+        heart.style.opacity = 0.85 + Math.random() * 0.15;
+        
+        // Обработчик касания/клика
+        heart.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Получаем координаты для звёздочек
+            const rect = heart.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Создаём звёздочки
+            createSparkles(centerX, centerY);
+            
+            // Удаляем сердечко
+            heart.remove();
+        });
+        
+        // Для телефонов — touchstart
+        heart.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const rect = heart.getBoundingClientRect();
+            const touch = e.touches[0];
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            createSparkles(centerX, centerY);
+            heart.remove();
+        });
         
         container.appendChild(heart);
         
+        // Удаляем, если долетело до верха
         setTimeout(() => {
-            heart.remove();
-        }, 15000);
+            if (heart.parentNode) heart.remove();
+        }, 14000);
     }
 
-    // Запускаем постоянный поток сердец (пореже, чтобы не перегружать)
+    // Запускаем сердечки (видимые и яркие)
     setInterval(() => {
-        createRisingHeart();
-    }, 500);
+        createHeart();
+    }, 600);
     
     // Стартовые сердечки
-    for(let i = 0; i < 25; i++) {
-        setTimeout(createRisingHeart, i * 180);
+    for(let i = 0; i < 15; i++) {
+        setTimeout(createHeart, i * 180);
     }
 
-    // Взрыв сердец при нажатии на кнопку (тоже прозрачный, но чуть ярче для эффекта)
+    // Взрыв сердец при нажатии на кнопку
     function burstHearts() {
-        const container = document.getElementById('heartContainer');
-        const count = 50;
-        for(let i = 0; i < count; i++) {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            const symbols = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸', '💞', '💕', '🪷'];
-            heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-            heart.style.left = (Math.random() * 100) + '%';
-            heart.style.bottom = '0px';
-            heart.style.fontSize = (Math.random() * 32 + 18) + 'px';
-            heart.style.animationDuration = (Math.random() * 4 + 3) + 's';
-            heart.style.animationDelay = '0s';
-            heart.style.opacity = 0.3 + Math.random() * 0.3; // чуть ярче, но всё равно прозрачные
-            container.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
+        for(let i = 0; i < 25; i++) {
+            setTimeout(() => {
+                const fakeHeart = document.createElement('div');
+                fakeHeart.classList.add('heart');
+                fakeHeart.innerHTML = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸'][Math.floor(Math.random() * 7)];
+                fakeHeart.style.left = (Math.random() * 100) + '%';
+                fakeHeart.style.bottom = '0px';
+                fakeHeart.style.fontSize = (40 + Math.random() * 30) + 'px';
+                fakeHeart.style.animationDuration = (3 + Math.random() * 3) + 's';
+                fakeHeart.style.animationDelay = '0s';
+                fakeHeart.style.opacity = '0.95';
+                
+                fakeHeart.addEventListener('click', (e) => {
+                    const rect = fakeHeart.getBoundingClientRect();
+                    createSparkles(rect.left + rect.width/2, rect.top + rect.height/2);
+                    fakeHeart.remove();
+                });
+                fakeHeart.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const rect = fakeHeart.getBoundingClientRect();
+                    createSparkles(rect.left + rect.width/2, rect.top + rect.height/2);
+                    fakeHeart.remove();
+                });
+                
+                container.appendChild(fakeHeart);
+                setTimeout(() => fakeHeart.remove(), 6000);
+            }, i * 40);
         }
     }
 
@@ -299,11 +386,6 @@
     btn.addEventListener('click', () => {
         burstHearts();
         
-        // Дополнительные сердечки после нажатия
-        for(let i = 0; i < 80; i++) {
-            setTimeout(createRisingHeart, i * 50);
-        }
-        
         btn.style.opacity = '0.9';
         btn.innerHTML = '💞 Спасибо, любимая Марина! 💞';
         btn.disabled = true;
@@ -311,21 +393,14 @@
         responseDiv.style.display = 'block';
         responseDiv.innerHTML = '❤️‍🩹 Мариночка, ты простила меня... Я так счастлив! ❤️‍🩹 <br> Обещаю, больше никаких ссор. Ты — моё солнышко! 🌞';
         
-        let extraBursts = 0;
-        const interval = setInterval(() => {
-            if(extraBursts >= 4) clearInterval(interval);
-            burstHearts();
-            extraBursts++;
-        }, 600);
-        
         const card = document.querySelector('.card');
         card.style.transform = 'scale(1.02)';
         setTimeout(() => card.style.transform = '', 400);
     });
     
     window.addEventListener('load', () => {
-        for(let i = 0; i < 40; i++) {
-            setTimeout(createRisingHeart, i * 120);
+        for(let i = 0; i < 20; i++) {
+            setTimeout(createHeart, i * 150);
         }
     });
 </script>
