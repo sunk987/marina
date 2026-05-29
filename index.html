@@ -1,40 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Марина, прости</title>
+    <title>Марина, прости меня ❤️</title>
     <style>
         body {
-            background: pink;
+            background: linear-gradient(145deg, #ffe6f0, #ffc0d0);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
-            font-family: sans-serif;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
         .card {
-            background: white;
-            padding: 30px;
-            border-radius: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 40px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #c9184a;
         }
         button {
             background: #ff4d6d;
             color: white;
             border: none;
-            padding: 15px 25px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
             border-radius: 50px;
+            cursor: pointer;
             margin-top: 20px;
+        }
+        .response {
+            margin-top: 20px;
+            color: #a51d4b;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>Мариночка, прости меня ❤️</h1>
-    <p>Ты — моё солнышко. Я очень сожалею и люблю тебя!</p>
-    <button onclick="this.style.display='none'; this.nextSibling.style.display='block'">Прости меня, Марина</button>
-    <p style="display:none; color:#c9184a;">❤️ Спасибо, любимая! ❤️</p>
+    <h1>Мариночка, прости меня 💖</h1>
+    <p>Ты — самый важный человек в моей жизни. Я очень сожалею и хочу всё исправить.</p>
+    <button onclick="this.style.display='none'; document.getElementById('msg').style.display='block'">✨ Прости меня, Марина ✨</button>
+    <div id="msg" class="response" style="display:none">❤️ Спасибо, любимая! Я тебя очень люблю! ❤️</div>
 </div>
 </body>
 </html>
