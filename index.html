@@ -85,58 +85,47 @@
             z-index: 1;
         }
 
-        .search-container {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 60px;
+        /* Блок поиска — теперь внутри header, всегда виден */
+        .search-row {
+            position: relative;
             z-index: 3;
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
+            padding: 15px 20px 5px 20px;
         }
 
         .search-input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(255, 65, 113, 0.6);
+            border-radius: 25px;
             color: #fff;
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 10px 16px;
+            font-size: 14px;
             backdrop-filter: blur(5px);
             outline: none;
-            transition: border-color 0.2s;
             min-width: 0;
         }
 
         .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .search-input:focus {
-            border-color: rgba(255, 42, 95, 0.7);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .search-btn {
-            background: rgba(255, 42, 95, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ff4171, #d0003c);
+            border: none;
             color: #fff;
-            font-size: 16px;
-            width: 38px;
-            height: 38px;
+            font-size: 18px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: background 0.2s;
+            box-shadow: 0 0 15px rgba(255, 42, 95, 0.5);
             flex-shrink: 0;
-        }
-
-        .search-btn:hover {
-            background: rgba(255, 42, 95, 0.7);
         }
 
         .menu-toggle {
@@ -167,8 +156,9 @@
             position: relative;
             z-index: 2;
             text-align: center;
-            padding: 60px 20px 10px 20px;
+            padding: 5px 20px 10px 20px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            padding-right: 50px;
         }
 
         .header h1 {
@@ -438,14 +428,14 @@
 <div class="player-container">
     <div class="player-overlay"></div>
 
-    <!-- Поле поиска -->
-    <div class="search-container">
-        <input type="text" class="search-input" id="search-input" placeholder="Поиск музыки на Sefon...">
-        <button class="search-btn" id="search-btn">🔍</button>
-    </div>
-
     <!-- Гамбургер -->
     <button class="menu-toggle" id="menu-toggle" aria-label="Показать плейлист">☰</button>
+
+    <!-- ПОИСК — теперь отдельной строкой -->
+    <div class="search-row">
+        <input type="text" class="search-input" id="search-input" placeholder="🔍 Поиск на Sefon.pro...">
+        <button class="search-btn" id="search-btn">▶</button>
+    </div>
 
     <div class="header">
         <h1>Иришке</h1>
@@ -481,7 +471,6 @@
             <span>🔊</span>
         </div>
 
-        <!-- Пузырь для комплиментов -->
         <div id="love-message"></div>
 
         <ul class="playlist hidden" id="playlist-container"></ul>
@@ -496,7 +485,6 @@
         { id: 4, title: "танцы на битом стекле", duration: "3:12", file: "track4.mp3" }
     ];
 
-    // Комплименты только про твою красоту, глаза, черты лица, походку, энергетику и искорку
     const loveMessages = [
         "Ты сегодня выглядишь просто волшебно ✨",
         "У тебя невероятные глаза, в них можно смотреть бесконечно 👀💖",
