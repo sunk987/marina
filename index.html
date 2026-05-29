@@ -305,17 +305,22 @@
 </audio>
 
 <script>
-    // МУЗЫКА: запуск при первом касании/клике
-    const music = document.getElementById('bgMusic');
-    function startMusic() {
-        if (music.paused) {
-            music.play().catch(e => console.log('Автовоспроизведение заблокировано'));
-        }
-        document.body.removeEventListener('touchstart', startMusic);
-        document.body.removeEventListener('click', startMusic);
-    }
-    document.body.addEventListener('touchstart', startMusic);
-    document.body.addEventListener('click', startMusic);
+    // АВТОЗАПУСК МУЗЫКИ после загрузки страницы
+    window.addEventListener('load', function() {
+        const music = document.getElementById('bgMusic');
+        music.play().catch(function(e) {
+            console.log('Автовоспроизведение заблокировано браузером. Попробуем позже...');
+            // Если браузер заблокировал - запустим при любом касании
+            document.body.addEventListener('touchstart', function playOnce() {
+                music.play();
+                document.body.removeEventListener('touchstart', playOnce);
+            });
+            document.body.addEventListener('click', function playOnce() {
+                music.play();
+                document.body.removeEventListener('click', playOnce);
+            });
+        });
+    });
 
     const container = document.getElementById('heartContainer');
     let activeHearts = 0;
