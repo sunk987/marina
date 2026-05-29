@@ -14,7 +14,7 @@
 
         body {
             min-height: 100vh;
-            /* Фоновая роза */
+            /* ТВОЙ ФАЙЛ С РОЗОЙ */
             background-image: url('cover.jpg');
             background-size: cover;
             background-position: center;
@@ -29,7 +29,7 @@
             touch-action: manipulation;
         }
 
-        /* Полупрозрачный слой поверх розы */
+        /* Полупрозрачный слой поверх розы, чтобы надпись и текст читались */
         body::before {
             content: '';
             position: fixed;
@@ -37,20 +37,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 220, 230, 0.5);
+            background: rgba(255, 220, 230, 0.45);
             z-index: 0;
         }
 
-        /* Крупная надпись "ПРОСТИ" на фоне */
-        body::after {
-            content: 'ПРОСТИ';
+        /* Крупная надпись "ПРОСТИ" ПОВЕРХ РОЗЫ */
+        .bg-text {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 12vw;
+            font-size: 14vw;
             font-weight: 900;
-            color: rgba(200, 60, 80, 0.25);
+            color: rgba(180, 50, 70, 0.3);
             font-family: 'Segoe UI', 'Playfair Display', cursive;
             letter-spacing: 15px;
             white-space: nowrap;
@@ -61,7 +60,7 @@
             text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
         }
 
-        /* Контейнер для сердец */
+        /* Контейнер для сердец (очень медленные) */
         .heart-container {
             position: fixed;
             bottom: 0;
@@ -84,23 +83,24 @@
             pointer-events: auto;
             z-index: 25;
             opacity: 0;
-            animation: floatUpFast 7s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+            /* ОЧЕНЬ МЕДЛЕННАЯ АНИМАЦИЯ — 20 секунд */
+            animation: floatUpVerySlow 22s cubic-bezier(0.3, 0.8, 0.4, 1) forwards;
         }
 
-        @keyframes floatUpFast {
+        @keyframes floatUpVerySlow {
             0% {
                 transform: translateY(0) rotate(0deg);
                 opacity: 0;
                 bottom: -80px;
             }
-            10% {
+            12% {
                 opacity: 1;
             }
-            90% {
+            88% {
                 opacity: 1;
             }
             100% {
-                transform: translateY(-110vh) rotate(400deg);
+                transform: translateY(-110vh) rotate(360deg);
                 opacity: 0;
                 bottom: 110vh;
             }
@@ -262,21 +262,24 @@
             .heart {
                 font-size: 48px;
             }
-            body::after {
-                font-size: 15vw;
+            .bg-text {
+                font-size: 18vw;
                 letter-spacing: 8px;
             }
         }
 
         @media (max-width: 480px) {
-            body::after {
+            .bg-text {
                 letter-spacing: 5px;
-                font-size: 18vw;
+                font-size: 20vw;
             }
         }
     </style>
 </head>
 <body>
+
+<!-- Надпись на фоне поверх розы -->
+<div class="bg-text">ПРОСТИ</div>
 
 <div class="heart-container" id="heartContainer"></div>
 
@@ -341,8 +344,8 @@
         heart.style.left = Math.random() * 85 + 7.5 + '%';
         heart.style.fontSize = (38 + Math.random() * 24) + 'px';
         
-        // БЫСТРАЯ СКОРОСТЬ: 5-8 секунд
-        const duration = 5 + Math.random() * 4;
+        // ОЧЕНЬ МЕДЛЕННАЯ СКОРОСТЬ: 18-25 секунд
+        const duration = 18 + Math.random() * 8;
         heart.style.animationDuration = duration + 's';
         heart.style.animationDelay = '0s';
         
@@ -379,27 +382,28 @@
         }, duration * 1000 + 500);
     }
 
-    // Сердечки появляются часто, раз в 0.9 секунды
+    // Сердечки появляются редко, раз в 2.5 секунды (чтобы не было много)
     setInterval(() => {
         createHeart();
-    }, 900);
+    }, 2500);
     
     // Стартовые сердечки
-    for(let i = 0; i < 8; i++) {
-        setTimeout(() => createHeart(), i * 200);
-    }
+    setTimeout(() => createHeart(), 500);
+    setTimeout(() => createHeart(), 1200);
+    setTimeout(() => createHeart(), 2000);
+    setTimeout(() => createHeart(), 2800);
 
     function burstHearts() {
-        for(let i = 0; i < 20; i++) {
+        for(let i = 0; i < 15; i++) {
             setTimeout(() => {
-                if (activeHearts >= MAX_HEARTS + 4) return;
+                if (activeHearts >= MAX_HEARTS + 3) return;
                 const fakeHeart = document.createElement('div');
                 fakeHeart.classList.add('heart');
                 fakeHeart.innerHTML = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸'][Math.floor(Math.random() * 7)];
                 fakeHeart.style.left = (Math.random() * 85 + 7.5) + '%';
                 fakeHeart.style.bottom = '-80px';
                 fakeHeart.style.fontSize = (40 + Math.random() * 26) + 'px';
-                const burstDuration = 4 + Math.random() * 4;
+                const burstDuration = 16 + Math.random() * 8;
                 fakeHeart.style.animationDuration = burstDuration + 's';
                 fakeHeart.style.animationDelay = '0s';
                 
@@ -426,7 +430,7 @@
                         activeHearts--;
                     }
                 }, burstDuration * 1000 + 500);
-            }, i * 80);
+            }, i * 100);
         }
     }
 
@@ -449,9 +453,11 @@
     });
     
     window.addEventListener('load', () => {
-        for(let i = 0; i < 6; i++) {
-            setTimeout(() => createHeart(), i * 180);
-        }
+        setTimeout(() => {
+            for(let i = 0; i < 3; i++) {
+                setTimeout(createHeart, i * 700);
+            }
+        }, 500);
     });
 </script>
 </body>
