@@ -35,11 +35,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.35);
             z-index: 0;
         }
 
-        /* Контейнер для плавающих сердец (снизу вверх) */
+        /* Контейнер для плавающих сердец - НА ПЕРЕДНЕМ ПЛАНЕ (поверх карточки тоже) */
         .heart-container {
             position: fixed;
             bottom: 0;
@@ -47,38 +47,42 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 20; /* Большой z-index, чтобы быть поверх всего */
             overflow: hidden;
         }
 
         .heart {
             position: absolute;
-            bottom: -20px;
-            font-size: 24px;
-            opacity: 0.8;
+            bottom: -30px;
+            font-size: 28px;
+            opacity: 0.25; /* Почти прозрачные - 25% видимости */
             animation: floatUp linear forwards;
-            color: #ff4d6d;
-            filter: drop-shadow(0 0 3px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.1));
+            transition: opacity 0.3s;
         }
 
         @keyframes floatUp {
             0% {
                 transform: translateY(0) rotate(0deg);
-                opacity: 1;
+                opacity: 0.25;
+            }
+            50% {
+                opacity: 0.35;
             }
             100% {
-                transform: translateY(-110vh) rotate(360deg);
+                transform: translateY(-120vh) rotate(360deg);
                 opacity: 0;
             }
         }
 
-        /* Карточка с текстом */
+        /* Карточка с текстом - тоже на переднем плане, но поверх сердец не будет, 
+           сердечки будут плавать И ПЕРЕД карточкой, но полупрозрачные - очень нежно */
         .card {
             position: relative;
-            z-index: 10;
+            z-index: 15; /* Чуть ниже сердец (20), чтобы сердечки были слегка поверх */
             max-width: 650px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(12px);
             border-radius: 60px;
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
@@ -111,7 +115,7 @@
             font-size: 1.6rem;
             line-height: 1.5;
             color: #2d1a20;
-            background: rgba(255, 240, 243, 0.9);
+            background: rgba(255, 240, 243, 0.85);
             padding: 25px;
             border-radius: 50px;
             margin: 25px 0;
@@ -203,6 +207,10 @@
             .response {
                 font-size: 1.2rem;
             }
+            .heart {
+                opacity: 0.2;
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -227,58 +235,61 @@
     <button class="forgive-btn" id="forgiveBtn">✨ Прости меня, Марина ✨</button>
     <div id="responseMessage" class="response" style="display: none;"></div>
     <div class="footer">
-        💖 Твои сердечки поднимаются к небу 💖
+        💖 Нежные сердечки танцуют для тебя 💖
     </div>
 </div>
 
 <script>
-    // Создаём сердечко, которое летит снизу вверх
+    // Создаём сердечко/цветок, который летит снизу вверх (ПОЧТИ ПРОЗРАЧНЫЙ)
     function createRisingHeart() {
         const container = document.getElementById('heartContainer');
         const heart = document.createElement('div');
         heart.classList.add('heart');
         
-        const heartSymbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝'];
-        heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+        // Красивые символы: сердечки и цветочки
+        const symbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝', '🌺', '🪷', '✨'];
+        heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
         
         heart.style.left = Math.random() * 100 + '%';
-        heart.style.fontSize = (Math.random() * 20 + 24) + 'px'; // 24-44px
-        heart.style.animationDuration = (Math.random() * 5 + 5) + 's'; // 5-10 секунд
-        heart.style.animationDelay = (Math.random() * 3) + 's';
-        heart.style.opacity = Math.random() * 0.6 + 0.4;
+        heart.style.fontSize = (Math.random() * 24 + 20) + 'px'; // 20-44px
+        heart.style.animationDuration = (Math.random() * 7 + 6) + 's'; // 6-13 секунд (медленнее, чтобы не мельтешить)
+        heart.style.animationDelay = (Math.random() * 5) + 's';
+        heart.style.opacity = 0.2 + Math.random() * 0.2; // 0.2-0.4 (очень прозрачные)
         
         container.appendChild(heart);
         
         setTimeout(() => {
             heart.remove();
-        }, 11000);
+        }, 15000);
     }
 
-    // Запускаем постоянный поток сердец
+    // Запускаем постоянный поток сердец (пореже, чтобы не перегружать)
     setInterval(() => {
         createRisingHeart();
-    }, 400);
+    }, 500);
     
     // Стартовые сердечки
-    for(let i = 0; i < 20; i++) {
-        setTimeout(createRisingHeart, i * 150);
+    for(let i = 0; i < 25; i++) {
+        setTimeout(createRisingHeart, i * 180);
     }
 
-    // Взрыв сердец при нажатии на кнопку
+    // Взрыв сердец при нажатии на кнопку (тоже прозрачный, но чуть ярче для эффекта)
     function burstHearts() {
         const container = document.getElementById('heartContainer');
-        const count = 45;
+        const count = 50;
         for(let i = 0; i < count; i++) {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸', '💞', '💕'][Math.floor(Math.random() * 9)];
+            const symbols = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸', '💞', '💕', '🪷'];
+            heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
             heart.style.left = (Math.random() * 100) + '%';
             heart.style.bottom = '0px';
-            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
-            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.fontSize = (Math.random() * 32 + 18) + 'px';
+            heart.style.animationDuration = (Math.random() * 4 + 3) + 's';
             heart.style.animationDelay = '0s';
+            heart.style.opacity = 0.3 + Math.random() * 0.3; // чуть ярче, но всё равно прозрачные
             container.appendChild(heart);
-            setTimeout(() => heart.remove(), 4000);
+            setTimeout(() => heart.remove(), 5000);
         }
     }
 
@@ -288,9 +299,9 @@
     btn.addEventListener('click', () => {
         burstHearts();
         
-        // Дополнительные сердечки
-        for(let i = 0; i < 70; i++) {
-            setTimeout(createRisingHeart, i * 40);
+        // Дополнительные сердечки после нажатия
+        for(let i = 0; i < 80; i++) {
+            setTimeout(createRisingHeart, i * 50);
         }
         
         btn.style.opacity = '0.9';
@@ -302,21 +313,19 @@
         
         let extraBursts = 0;
         const interval = setInterval(() => {
-            if(extraBursts >= 5) clearInterval(interval);
+            if(extraBursts >= 4) clearInterval(interval);
             burstHearts();
             extraBursts++;
-        }, 500);
+        }, 600);
         
-        // Лёгкая анимация карточки
         const card = document.querySelector('.card');
         card.style.transform = 'scale(1.02)';
         setTimeout(() => card.style.transform = '', 400);
     });
     
-    // При загрузке страницы — волна сердец
     window.addEventListener('load', () => {
-        for(let i = 0; i < 35; i++) {
-            setTimeout(createRisingHeart, i * 100);
+        for(let i = 0; i < 40; i++) {
+            setTimeout(createRisingHeart, i * 120);
         }
     });
 </script>
