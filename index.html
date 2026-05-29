@@ -39,7 +39,6 @@
             z-index: 0;
         }
 
-        /* Контейнер для сердец */
         .heart-container {
             position: fixed;
             bottom: 0;
@@ -54,31 +53,31 @@
 
         .heart {
             position: absolute;
-            bottom: -80px; /* Начинают снизу, за границей экрана */
-            font-size: 42px;
+            bottom: -80px;
+            font-size: 44px;
             cursor: pointer;
             filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
             transition: transform 0.1s ease;
             pointer-events: auto;
             z-index: 25;
-            opacity: 0; /* Изначально невидимы */
-            animation: floatUpSmooth 9s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            opacity: 0;
+            animation: floatUpSlow 16s cubic-bezier(0.3, 0.8, 0.4, 1) forwards;
         }
 
-        @keyframes floatUpSmooth {
+        @keyframes floatUpSlow {
             0% {
                 transform: translateY(0) rotate(0deg);
                 opacity: 0;
                 bottom: -80px;
             }
-            10% {
+            12% {
                 opacity: 1;
             }
-            90% {
+            88% {
                 opacity: 1;
             }
             100% {
-                transform: translateY(-110vh) rotate(380deg);
+                transform: translateY(-110vh) rotate(360deg);
                 opacity: 0;
                 bottom: 110vh;
             }
@@ -88,7 +87,6 @@
             transform: scale(0.9);
         }
 
-        /* Звёздочки */
         .sparkle {
             position: fixed;
             pointer-events: none;
@@ -108,7 +106,6 @@
             }
         }
 
-        /* Карточка */
         .card {
             position: relative;
             z-index: 15;
@@ -272,9 +269,8 @@
 <script>
     const container = document.getElementById('heartContainer');
     let activeHearts = 0;
-    const MAX_HEARTS = 8; // Одновременно максимум 8 сердец (не слишком много)
+    const MAX_HEARTS = 10;
 
-    // Функция создания звёздочек
     function createSparkles(x, y) {
         const sparkleCount = 12;
         for (let i = 0; i < sparkleCount; i++) {
@@ -298,7 +294,6 @@
         }
     }
 
-    // Создание одного сердечка
     function createHeart() {
         if (activeHearts >= MAX_HEARTS) return;
         
@@ -308,19 +303,16 @@
         const symbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝', '💘'];
         heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
         
-        // Случайная позиция по горизонтали
         heart.style.left = Math.random() * 85 + 7.5 + '%';
-        // Разный размер
         heart.style.fontSize = (38 + Math.random() * 24) + 'px';
-        // Разная скорость подъёма (8-12 секунд)
-        const duration = 8 + Math.random() * 5;
+        
+        // МЕДЛЕННАЯ СКОРОСТЬ: от 16 до 22 секунд на подъём
+        const duration = 16 + Math.random() * 8;
         heart.style.animationDuration = duration + 's';
-        // Небольшая задержка для плавности
         heart.style.animationDelay = '0s';
         
         activeHearts++;
         
-        // Обработчик клика/касания
         heart.addEventListener('click', (e) => {
             e.stopPropagation();
             const rect = heart.getBoundingClientRect();
@@ -335,7 +327,6 @@
             e.preventDefault();
             e.stopPropagation();
             const rect = heart.getBoundingClientRect();
-            const touch = e.touches[0];
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
             createSparkles(centerX, centerY);
@@ -345,7 +336,6 @@
         
         container.appendChild(heart);
         
-        // Автоудаление, если долетело до верха
         setTimeout(() => {
             if (heart.parentNode) {
                 heart.remove();
@@ -354,18 +344,17 @@
         }, duration * 1000 + 500);
     }
 
-    // Плавное появление сердец (интервал подольше, чтобы не было много)
+    // Новое сердце каждые 2.5 секунды (редко)
     setInterval(() => {
         createHeart();
-    }, 1800); // Новое сердце каждые 1.8 секунды
+    }, 2500);
     
-    // Стартовые сердечки (4 штуки, плавно)
-    setTimeout(() => createHeart(), 300);
-    setTimeout(() => createHeart(), 800);
-    setTimeout(() => createHeart(), 1400);
-    setTimeout(() => createHeart(), 2100);
+    // Стартовые сердечки
+    setTimeout(() => createHeart(), 500);
+    setTimeout(() => createHeart(), 1200);
+    setTimeout(() => createHeart(), 2000);
+    setTimeout(() => createHeart(), 2800);
 
-    // Взрыв сердец при нажатии на кнопку (но не перегружаем)
     function burstHearts() {
         for(let i = 0; i < 12; i++) {
             setTimeout(() => {
@@ -376,7 +365,8 @@
                 fakeHeart.style.left = (Math.random() * 85 + 7.5) + '%';
                 fakeHeart.style.bottom = '-80px';
                 fakeHeart.style.fontSize = (40 + Math.random() * 26) + 'px';
-                fakeHeart.style.animationDuration = (5 + Math.random() * 4) + 's';
+                const burstDuration = 14 + Math.random() * 6;
+                fakeHeart.style.animationDuration = burstDuration + 's';
                 fakeHeart.style.animationDelay = '0s';
                 
                 activeHearts++;
@@ -401,8 +391,8 @@
                         fakeHeart.remove();
                         activeHearts--;
                     }
-                }, 8000);
-            }, i * 100);
+                }, burstDuration * 1000 + 500);
+            }, i * 120);
         }
     }
 
@@ -425,10 +415,9 @@
     });
     
     window.addEventListener('load', () => {
-        // Небольшая задержка для красивого старта
         setTimeout(() => {
             for(let i = 0; i < 3; i++) {
-                setTimeout(createHeart, i * 500);
+                setTimeout(createHeart, i * 700);
             }
         }, 500);
     });
