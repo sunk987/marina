@@ -1,40 +1,324 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Марина, прости</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Марина, прости меня ❤️</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: pink;
+            min-height: 100vh;
+            /* Фоновая картинка (замени ссылку на свою, если хочешь) */
+            background-image: url('https://images.unsplash.com/photo-1513151233558-860c5392818d?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* Затемнение фона для читаемости текста */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        /* Контейнер для плавающих сердец (снизу вверх) */
+        .heart-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -20px;
+            font-size: 24px;
+            opacity: 0.8;
+            animation: floatUp linear forwards;
+            color: #ff4d6d;
+            filter: drop-shadow(0 0 3px rgba(0,0,0,0.3));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Карточка с текстом */
         .card {
-            background: white;
-            padding: 30px;
-            border-radius: 30px;
+            position: relative;
+            z-index: 10;
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+            padding: 40px 35px 50px;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
         }
-        button {
-            background: #ff4d6d;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            font-size: 18px;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #c9184a;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message {
+            font-size: 1.6rem;
+            line-height: 1.5;
+            color: #2d1a20;
+            background: rgba(255, 240, 243, 0.9);
+            padding: 25px;
             border-radius: 50px;
-            margin-top: 20px;
+            margin: 25px 0;
+            font-weight: 500;
+        }
+
+        .reasons {
+            text-align: left;
+            background: rgba(255, 220, 230, 0.8);
+            padding: 20px 25px;
+            border-radius: 45px;
+            margin: 25px 0;
+            list-style-type: none;
+        }
+
+        .reasons li {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.3rem;
+            color: #4a2c33;
+            font-weight: 500;
+        }
+
+        .reasons li::before {
+            content: "🌸";
+            font-size: 1.6rem;
+        }
+
+        .forgive-btn {
+            background: linear-gradient(95deg, #ff4d6d, #ff8c9e);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 18px 35px;
+            border-radius: 80px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(199, 35, 70, 0.4);
+            margin: 15px 0 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .forgive-btn:active {
+            transform: scale(0.97);
+        }
+
+        .response {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 25px;
+            color: #a51d4b;
+            background: #ffeef2;
+            padding: 18px;
+            border-radius: 60px;
+            border: 2px solid #ffb7c9;
+        }
+
+        .footer {
+            margin-top: 35px;
+            font-size: 1rem;
+            color: #b35c74;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 25px 20px 35px;
+            }
+            h1 {
+                font-size: 2.4rem;
+            }
+            .message {
+                font-size: 1.3rem;
+                padding: 20px;
+            }
+            .reasons li {
+                font-size: 1.1rem;
+            }
+            .forgive-btn {
+                font-size: 1.4rem;
+                padding: 14px 25px;
+            }
+            .response {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
+
+<div class="heart-container" id="heartContainer"></div>
+
 <div class="card">
-    <h1>Мариночка, прости меня ❤️</h1>
-    <p>Ты — моё солнышко. Я очень сожалею и люблю тебя!</p>
-    <button onclick="this.style.display='none'; this.nextSibling.style.display='block'">Прости меня, Марина</button>
-    <p style="display:none; color:#c9184a;">❤️ Спасибо, любимая! ❤️</p>
+    <h1>🌹 Мариночка, прости меня! 🌹</h1>
+    <div class="message">
+        Моя любимая жена, я очень сожалею о нашей ссоре. <br>
+        Ты — самый важный человек в моей жизни, и я хочу всё исправить. ❤️
+    </div>
+    
+    <ul class="reasons">
+        <li>Ты — самая нежная и заботливая</li>
+        <li>Я был неправ, прости меня, родная</li>
+        <li>Твоя улыбка — моё главное счастье</li>
+        <li>Я обещаю любить тебя ещё сильнее</li>
+    </ul>
+
+    <button class="forgive-btn" id="forgiveBtn">✨ Прости меня, Марина ✨</button>
+    <div id="responseMessage" class="response" style="display: none;"></div>
+    <div class="footer">
+        💖 Твои сердечки поднимаются к небу 💖
+    </div>
 </div>
+
+<script>
+    // Создаём сердечко, которое летит снизу вверх
+    function createRisingHeart() {
+        const container = document.getElementById('heartContainer');
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        
+        const heartSymbols = ['❤️', '💖', '💗', '🌸', '💕', '💓', '🌹', '💞', '💝'];
+        heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+        
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 20 + 24) + 'px'; // 24-44px
+        heart.style.animationDuration = (Math.random() * 5 + 5) + 's'; // 5-10 секунд
+        heart.style.animationDelay = (Math.random() * 3) + 's';
+        heart.style.opacity = Math.random() * 0.6 + 0.4;
+        
+        container.appendChild(heart);
+        
+        setTimeout(() => {
+            heart.remove();
+        }, 11000);
+    }
+
+    // Запускаем постоянный поток сердец
+    setInterval(() => {
+        createRisingHeart();
+    }, 400);
+    
+    // Стартовые сердечки
+    for(let i = 0; i < 20; i++) {
+        setTimeout(createRisingHeart, i * 150);
+    }
+
+    // Взрыв сердец при нажатии на кнопку
+    function burstHearts() {
+        const container = document.getElementById('heartContainer');
+        const count = 45;
+        for(let i = 0; i < count; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['❤️', '💖', '💗', '💘', '💝', '🌹', '🌸', '💞', '💕'][Math.floor(Math.random() * 9)];
+            heart.style.left = (Math.random() * 100) + '%';
+            heart.style.bottom = '0px';
+            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            heart.style.animationDelay = '0s';
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 4000);
+        }
+    }
+
+    const btn = document.getElementById('forgiveBtn');
+    const responseDiv = document.getElementById('responseMessage');
+    
+    btn.addEventListener('click', () => {
+        burstHearts();
+        
+        // Дополнительные сердечки
+        for(let i = 0; i < 70; i++) {
+            setTimeout(createRisingHeart, i * 40);
+        }
+        
+        btn.style.opacity = '0.9';
+        btn.innerHTML = '💞 Спасибо, любимая Марина! 💞';
+        btn.disabled = true;
+        
+        responseDiv.style.display = 'block';
+        responseDiv.innerHTML = '❤️‍🩹 Мариночка, ты простила меня... Я так счастлив! ❤️‍🩹 <br> Обещаю, больше никаких ссор. Ты — моё солнышко! 🌞';
+        
+        let extraBursts = 0;
+        const interval = setInterval(() => {
+            if(extraBursts >= 5) clearInterval(interval);
+            burstHearts();
+            extraBursts++;
+        }, 500);
+        
+        // Лёгкая анимация карточки
+        const card = document.querySelector('.card');
+        card.style.transform = 'scale(1.02)';
+        setTimeout(() => card.style.transform = '', 400);
+    });
+    
+    // При загрузке страницы — волна сердец
+    window.addEventListener('load', () => {
+        for(let i = 0; i < 35; i++) {
+            setTimeout(createRisingHeart, i * 100);
+        }
+    });
+</script>
 </body>
 </html>
